@@ -6,19 +6,18 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-
-func TestRegisterInput_Sanitize(t *testing.T){
+func TestRegisterInput_Sanitize(t *testing.T) {
 	input := RegisterInput{
-		UserName: "   bob ",
-		Email: "BOB@gmail.com", 
-		Password: "password", 
+		Username:        "   bob ",
+		Email:           "BOB@gmail.com",
+		Password:        "password",
 		ConfirmPassword: "password",
 	}
 
 	want := RegisterInput{
-		UserName: "bob",
-		Email: "bob@gmail.com", 
-		Password: "password", 
+		Username:        "bob",
+		Email:           "bob@gmail.com",
+		Password:        "password",
 		ConfirmPassword: "password",
 	}
 
@@ -27,28 +26,28 @@ func TestRegisterInput_Sanitize(t *testing.T){
 	require.Equal(t, want, input)
 }
 
-func TestRegisterInput_Validate(t *testing.T){
-	testCases := []struct{
-		name string
+func TestRegisterInput_Validate(t *testing.T) {
+	testCases := []struct {
+		name  string
 		input RegisterInput
-		err error
+		err   error
 	}{
 		{
 			name: "valid",
 			input: RegisterInput{
-				UserName: "bob",
-				Email: "bob@gmail.com",
-				Password: "password",
+				Username:        "bob",
+				Email:           "bob@gmail.com",
+				Password:        "password",
 				ConfirmPassword: "password",
 			},
 			err: nil,
 		},
 		{
-			name: "to short username",
+			name: "to short Username ",
 			input: RegisterInput{
-				UserName: "O",
-				Email: "O@gmail.com",
-				Password: "password",
+				Username:        "O",
+				Email:           "O@gmail.com",
+				Password:        "password",
 				ConfirmPassword: "password",
 			},
 			err: ErrValidation,
@@ -56,30 +55,29 @@ func TestRegisterInput_Validate(t *testing.T){
 		{
 			name: "to short password",
 			input: RegisterInput{
-				UserName: "bob",
-				Email: "bob@gmail.com",
-				Password: "pass",
+				Username:        "bob",
+				Email:           "bob@gmail.com",
+				Password:        "pass",
 				ConfirmPassword: "pass",
 			},
-			err: ErrValidation, 
+			err: ErrValidation,
 		},
 		{
 			name: "confirm password does't match a password",
 			input: RegisterInput{
-				UserName: "bob",
-				Email: "bob@gmail.com",
-				Password: "password",
+				Username:        "bob",
+				Email:           "bob@gmail.com",
+				Password:        "password",
 				ConfirmPassword: "password1",
 			},
 			err: ErrValidation,
 		},
 	}
 
-
 	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T){
+		t.Run(tc.name, func(t *testing.T) {
 			err := tc.input.Validate()
-			
+
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {

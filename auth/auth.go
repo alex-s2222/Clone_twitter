@@ -19,7 +19,7 @@ var emailRegex = regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-
 
 type AuthService interface{
 	Register(ctx context.Context, input RegisterInput) (AuthResponse, error )
-
+	Login(ctx context.Context, input LoginInput) (AuthResponse, error)
 }
 
 type AuthResponse struct{
@@ -30,7 +30,7 @@ type AuthResponse struct{
 
 type RegisterInput struct{
 	Email string
-	UserName string
+	Username  string
 	Password string 
 	ConfirmPassword string	
 }
@@ -40,13 +40,12 @@ func (in *RegisterInput) Sanitize(){
 	in.Email = strings.TrimSpace(in.Email)
 	in.Email = strings.ToLower(in.Email)
 
-	in.UserName = strings.TrimSpace(in.UserName)
-
+	in.Username  = strings.TrimSpace(in.Username )
 }
 
 func (in RegisterInput) Validate() error {
-	if len(in.UserName) < UsernameMinLength{
-		return fmt.Errorf("%w: username not long enough, (%d) charester as least ", ErrValidation, UsernameMinLength)
+	if len(in.Username ) < UsernameMinLength{
+		return fmt.Errorf("%w: Username  not long enough, (%d) charester as least ", ErrValidation, UsernameMinLength)
 	}
 
 	if !emailRegex.MatchString(in.Email){
@@ -63,3 +62,27 @@ func (in RegisterInput) Validate() error {
 	return nil
 
 }
+
+type LoginInput struct{
+	Email string
+	Password string 
+}
+
+
+func (in *LoginInput) Sanitize(){
+	in.Email = strings.TrimSpace(in.Email)
+	in.Email = strings.ToLower(in.Email)
+}
+
+func (in LoginInput) Validate() error {
+	if !emailRegex.MatchString(in.Email){
+		return fmt.Errorf("%w: email not valid", ErrValidation)
+	}
+
+	if len(in.Password) < 1 {
+		return fmt.Errorf("%w: password required", ErrValidation)
+	}
+
+	return nil
+}
+
